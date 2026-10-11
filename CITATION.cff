@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the article below."
+title: "Physics-Informed Few-Shot Flank-Wear Prediction from Sparse Inspections in Swiss-Type Turning of Stainless Steel"
+type: software
+authors:
+  - family-names: Pusma
+    given-names: Manuel
+    affiliation: "KSF Institute for Advanced Manufacturing, Furtwangen University"
+    email: manuel.pusma.j@uni.pe
+license: MIT
+preferred-citation:
+  type: article
+  title: "Physics-Informed Few-Shot Flank-Wear Prediction from Sparse Inspections in Swiss-Type Turning of Stainless Steel"
+  authors:
+    - family-names: Pusma
+      given-names: Manuel
+    - family-names: Fattahi
+      given-names: Saman
+    - family-names: Schnell
+      given-names: Josef
+    - family-names: Ahmadpoor
+      given-names: Seyyed Sajjad
+    - family-names: Alinaghizadeh
+      given-names: Amir
+    - family-names: Azarhoushang
+      given-names: Bahman
+  journal: "Machines"
+  year: 2026

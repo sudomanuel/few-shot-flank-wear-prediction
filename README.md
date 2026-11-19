@@ -316,12 +316,15 @@ If you use this code, please cite the article (full reference to be added on pub
 
 ## Author
 
-Manuel Inocencio Pusma Jurado<sup>1,2</sup> — code, analysis and figures in this repository.
+Manuel Inocencio Pusma Jurado<sup>1,2</sup> — code, analysis and computed figures in this
+repository.
 
 <sup>1</sup> KSF Institute for Advanced Manufacturing, Furtwangen University, Tuttlingen, Germany<br>
 <sup>2</sup> Faculty of Electrical and Electronic Engineering, Universidad Nacional de Ingeniería, Lima, Peru
 
-The article is co-authored; its full author list is in the citation above.
+The article is co-authored; its full author list is in the citation above. The photograph of the
+experimental setup and the micrographs shown here were produced in the laboratory and are
+reproduced from the article.
 
 ## Acknowledgements
 

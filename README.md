@@ -2,13 +2,13 @@
 
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB)](requirements.txt)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2E7D32)](LICENSE)
-[![Article](https://img.shields.io/badge/article-submitted%20to%20Machines%20(MDPI)-546E7A)](#citation)
+[![Article](https://img.shields.io/badge/article-accepted%20in%20Machines%20(MDPI)-2E7D32)](#citation)
 
 This repository holds the analysis code of the article *Physics-Informed Few-Shot Flank-Wear
-Prediction from Sparse Inspections in Swiss-Type Turning of Stainless Steel*, submitted to
-*Machines* (MDPI), together with the documentation of the data behind it. Run in order, the eight
-scripts in `analysis/` reproduce every result table and computed figure of the article from the
-measured wear data.
+Prediction from Sparse Inspections in Swiss-Type Turning of Stainless Steel*, accepted for
+publication in *Machines* (MDPI), together with the documentation of the data behind it. Run in
+order, the eight scripts in `analysis/` reproduce every result table and computed figure of the
+article from the measured wear data.
 
 <p align="center">
   <img src="docs/figures/fig04_overview.png" width="880" alt="Overview of the study">
@@ -33,9 +33,9 @@ parts, and four long tests run until the tool broke, giving 104 measured VBmax v
 is evaluated by leave-one-tool-out validation, in which each tool is predicted by a model
 fitted on the other tools, and scored on measured values only. Three predictors are compared under that one
 protocol: regressors trained on vibration features, a fleet-average wear curve, and a power law
-whose shape is constrained to be concave. Each forecast is wrapped in a split-conformal band, a
-distribution-free interval whose coverage is calibrated on the errors made on the other tools, and
-the four observed breakages are analysed separately with censoring.
+whose shape is constrained to be concave. Each forecast is wrapped in a tool-grouped
+cross-conformal band, a distribution-free interval whose coverage is calibrated on the errors made
+on the other tools, and the four observed breakages are analysed separately with censoring.
 
 The central result is that the constrained law extrapolates long trajectories from three
 inspections with a mean absolute error of 16 µm, while the vibration-based regressors do not
@@ -127,9 +127,9 @@ favourable partial-least-squares baseline on 32 wear-sensitive indicators, each 
 of a part to estimate the wear of that same part.
 
 Uncertainty and end of life are treated separately. The conformal bands are calibrated per forecast
-horizon on the errors of the other tools, with the calibration tool and the tested tool both
-excluded from the fit that produces each error, and horizons with too few errors are reported as
-unbounded rather than closed by assumption. Breakage is summarised by a Kaplan–Meier estimate on the
+horizon on the errors of the other tools, grouped by tool and nested: the calibration tool and the
+tested tool are both excluded from the fit that produces each error, and horizons with too few
+errors are reported as unbounded rather than closed by assumption. Breakage is summarised by a Kaplan–Meier estimate on the
 wear scale and by an exploratory discrete-time hazard, in both cases treating the tools that did not
 break as censored at their last measured wear.
 
@@ -205,7 +205,7 @@ title.</sub></p>
 | Signal description | Time-, frequency- and time–frequency-domain features of each tool–workpiece contact, aggregated over the six contacts of a part, giving 294 features |
 | Sensor benchmark | Ridge regression, the LASSO, elastic net, random forest, gradient-boosted trees, ridge regression with a cross-validated penalty, a multilayer perceptron with 64 and 32 units, and partial least squares on 32 wear-sensitive indicators |
 | Wear-curve fitting | Theil–Sen estimator, Siegel repeated median as a sensitivity check, ordinary least squares, and a grid search for the shared exponent |
-| Uncertainty | Split-conformal prediction bands, with Clopper–Pearson intervals for the measured coverage |
+| Uncertainty | Tool-grouped cross-conformal prediction bands (nested leave-one-tool-out), with Clopper–Pearson intervals for the measured coverage |
 | Breakage | Kaplan–Meier estimate, discrete-time hazard by maximum likelihood with a Firth-penalised check, profile-likelihood intervals, refits leaving out one breakage at a time, and a bootstrap over tools |
 | External check | The public PHM 2010 milling benchmark, three labelled cutters measured after each of 315 cuts |
 
@@ -286,16 +286,17 @@ each script reads the outputs of the previous ones.
 | Script | Output | In the article |
 |---|---|---|
 | `01_build_ledger.py` | `doe_records.csv`, `doe_tools.csv` | Table 2, Figure 3 |
-| `02_sensor_regression.py` | `sensor_regression.csv` | Figure 5 |
+| `02_sensor_regression.py` | `sensor_regression.csv` | Figure 5, Section 3.3 (cooling indicator) |
 | `03_fewshot_accuracy.py` | `fewshot_doe_summary.csv`, `fewshot_doe_pertool.csv`, `fewshot_doe_conformal.csv` | Table 3, Figures 6 and 7 |
-| `04_robustness.py` | `ablation.csv`, `negative_rate.csv`, `conformal_nested.csv`, `cutoff_sensitivity.csv` | Table 4, Figure 8 |
+| `04_robustness.py` | `ablation.csv`, `negative_rate.csv`, `conformal_nested.csv`, `cutoff_sensitivity.csv` | Table 4, Figure 8, Section 4.4 (the bands reported there are the nested rows) |
 | `05_breakage_hazard.py` | `hazard_doe_fits.csv`, `hazard_doe_loo.csv`; bootstrap printed to the console | Section 4.5 |
 | `06_hazard_bands.py` | `hazard_bands.csv` | Figure 9 |
 | `07_figures.py` | `Fig2_micrographs.png` to `Fig9_breakage_evidence.png` | Figures 2 to 9 |
 | `08_phm2010_check.py` | `phm2010_base.csv` | Appendix A, Table 5 |
 
-Figure 1 and Figure 4 of the article are a photograph of the setup and a schematic, and are not
-produced by the code.
+Figure 1 of the article is a photograph of the experimental setup and is not produced by the code.
+Figure 2 is assembled by `07_figures.py` from the micrographs listed in
+[data/README.md](data/README.md).
 
 ## Citation
 
@@ -305,17 +306,17 @@ If you use this code, please cite the article (full reference to be added on pub
 @article{pusma2026fewshot,
   title   = {Physics-Informed Few-Shot Flank-Wear Prediction from Sparse Inspections in
              Swiss-Type Turning of Stainless Steel},
-  author  = {Pusma, Manuel and Fattahi, Saman and Schnell, Josef and Ahmadpoor, Seyyed Sajjad and
-             Alinaghizadeh, Amir and Azarhoushang, Bahman},
+  author  = {Pusma Jurado, Manuel Inocencio and Fattahi, Saman and Schnell, Josef and
+             Ahmadpoor, Seyyed Sajjad and Alinaghizadeh, Amir and Azarhoushang, Bahman},
   journal = {Machines},
   year    = {2026},
-  note    = {Submitted}
+  note    = {Accepted for publication}
 }
 ```
 
 ## Author
 
-Manuel Pusma<sup>1,2</sup> — code, analysis and figures in this repository.
+Manuel Inocencio Pusma Jurado<sup>1,2</sup> — code, analysis and figures in this repository.
 
 <sup>1</sup> KSF Institute for Advanced Manufacturing, Furtwangen University, Tuttlingen, Germany<br>
 <sup>2</sup> Faculty of Electrical and Electronic Engineering, Universidad Nacional de Ingeniería, Lima, Peru

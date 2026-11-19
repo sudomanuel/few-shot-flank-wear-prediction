@@ -5,7 +5,7 @@ excluding breakage parts, readings above 300 um and the unmeasured 55/0.08/dry s
 (workpieces 89-93). Seven regressors on all features and three PLS models on wear indicators.
 
 Input:  data/vibration_features.csv (available from the authors on request), out/results/doe_records.csv
-Output: out/results/sensor_regression.csv (Figure 5)
+Output: out/results/sensor_regression.csv (Figure 5, plus the cooling-indicator rows of Section 3.3)
 """
 import os, sys
 import numpy as np, pandas as pd
@@ -58,3 +58,29 @@ for tag, f in (("measured labels only", meas),):
     print(tag, "done")
 R = pd.DataFrame(rows); R.to_csv(os.path.join(OUT, "sensor_regression.csv"), index=False)
 pd.set_option("display.width", 220); print(R.to_string(index=False))
+
+# --- Binary cooling indicator (Section 3.3 and the caption of Figure 5) ----------------------
+# The cooling factor is a run-level constant: it has no within-tool variation, so it cannot supply
+# the missing within-tool wear scale. Appending it alongside the continuous conditions (vc, f)
+# leaves the out-of-sample R2 negative for every regressor. Reported here as a separate check;
+# these rows carry a different tag and do not enter Figure 5.
+cool = (meas.cooling.astype(str).str.strip().str.lower() != "dry").astype(float)
+withc = meas.copy(); withc["cool"] = cool
+allc = F2.num_cols(meas) + ["cool"]; phys = F2.phys_cols(meas)
+crows = []
+for name, fn in ZOO.items():
+    r = F2.loto_predict(withc, allc, fn)
+    crows.append(dict(data="cooling indicator", features=f"all {len(allc)}", model=name,
+                      n_tools=r["n"], MAE=round(r["MAE"], 1), R2=round(r["R2"], 2)))
+# For the favourable PLS baseline the indicators are expressed relative to the tool's first part,
+# so the static indicator is appended after that step, as vc and f are.
+rel = F2.relative_to_breakin(meas, phys); rel["cool"] = cool.to_numpy()
+r = F2.loto_predict(rel, phys + ["vc", "fz", "cool"], F2.m_pls_factory())
+crows.append(dict(data="cooling indicator", features=f"{len(phys)} physics indicators",
+                  model="PLS, relative + cutting conditions + cooling", n_tools=r["n"],
+                  MAE=round(r["MAE"], 1), R2=round(r["R2"], 2)))
+C = pd.DataFrame(crows)
+R = pd.concat([R, C], ignore_index=True); R.to_csv(os.path.join(OUT, "sensor_regression.csv"), index=False)
+print("")
+print(f"with the binary cooling indicator appended, every R2 stays negative (best {C.R2.max():.2f})")
+print(C.to_string(index=False))
